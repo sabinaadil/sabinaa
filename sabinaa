@@ -1,0 +1,30 @@
+import catboost
+from catboost import CatBoostClassifier
+from catboost import Pool
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Загрузите данные для задачи классификации (замените этот код на ваш способ загрузки данных)
+# Пример загрузки данных из библиотеки sklearn
+from sklearn.datasets import load_iris
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+# Разделите данные на обучающий и тестовый наборы
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Создайте объект Pool для обучения и тестирования
+train_pool = Pool(data=X_train, label=y_train)
+test_pool = Pool(data=X_test, label=y_test)
+
+# Инициализируйте и обучите модель CatBoost
+model = CatBoostClassifier(iterations=500, depth=6, learning_rate=0.1, loss_function='MultiClass')
+model.fit(train_pool)
+
+# Предскажите классы для тестового набора
+y_pred = model.predict(test_pool)
+
+# Оцените качество модели
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.2f}')
